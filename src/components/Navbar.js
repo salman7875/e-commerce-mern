@@ -2,8 +2,10 @@ import styled from 'styled-components'
 import SearchIcon from '@mui/icons-material/Search'
 import Badge from '@mui/material/Badge'
 import { ShoppingCartOutlined } from '@mui/icons-material'
+import { useSelector } from 'react-redux'
 
 import { mobile } from '../responsive'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   height: 60px;
@@ -53,7 +55,6 @@ const Center = styled.div`
 
 const Logo = styled.h1`
   font-weight: bold;
-
   ${mobile({ fontSize: '24px' })}
 `
 
@@ -75,6 +76,9 @@ const MenuItem = styled.div`
 `
 
 const Navbar = () => {
+  const quantity = useSelector(state => state.cart.quantity)
+  const user = useSelector(state => state.user.currentUser)
+
   return (
     <Container>
       <Wrapper>
@@ -86,16 +90,31 @@ const Navbar = () => {
           </SearchContainer>
         </Left>
         <Center>
-          <Logo>Salman.</Logo>
+          <Link to='/' style={{ textDecoration: 'none', color: '#000' }}>
+            <Logo>Salman.</Logo>
+          </Link>
         </Center>
         <Right>
-          <MenuItem>REGISTER</MenuItem>
-          <MenuItem>SIGN IN</MenuItem>
-          <MenuItem>
-            <Badge badgeContent={4} color='primary'>
-              <ShoppingCartOutlined />
-            </Badge>
-          </MenuItem>
+          {!user &&
+            (<MenuItem>
+              <Link to='register'>REGISTER</Link>
+            </MenuItem>)(
+              <MenuItem>
+                <Link to='login'>SIGN IN</Link>
+              </MenuItem>
+            )}
+          {user && (
+            <MenuItem>
+              <Link>Logout</Link>
+            </MenuItem>
+          )}
+          <Link to='/cart'>
+            <MenuItem>
+              <Badge badgeContent={quantity} color='primary'>
+                <ShoppingCartOutlined />
+              </Badge>
+            </MenuItem>
+          </Link>
         </Right>
       </Wrapper>
     </Container>
